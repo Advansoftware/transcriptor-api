@@ -95,6 +95,7 @@
                     <button class="tab-btn active" data-tab="curl">cURL</button>
                     <button class="tab-btn" data-tab="python">Python</button>
                     <button class="tab-btn" data-tab="evolution">Evolution API</button>
+                    <button class="tab-btn" data-tab="models-doc">Listar Modelos</button>
                 </div>
 
                 <div class="tab-content active" id="curl">
@@ -126,6 +127,12 @@ print(response.json()["text"])</code></pre>
                         <p><strong>Parâmetros Form-Data:</strong> <code>model=base</code></p>
                     </div>
                     <p class="small">Recomendamos o modelo <code>small</code> para melhor captura de áudios de voz do WhatsApp.</p>
+                </div>
+
+                <div class="tab-content" id="models-doc">
+                    <p>Para listar todos os modelos suportados e ver qual está ativo no momento:</p>
+                    <pre><code>curl -X GET https://transcriptor.respondia.pro/models</code></pre>
+                    <p>A resposta será um JSON com a lista de modelos disponíveis (tiny, base, small, medium, large...).</p>
                 </div>
             </div>
         </section>
