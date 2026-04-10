@@ -1,4 +1,5 @@
 import os
+import asyncio
 import shutil
 import tempfile
 import time
@@ -27,6 +28,10 @@ app = FastAPI(title="Whisper API Local", lifespan=lifespan)
 # Configurações Globais
 API_SECRET_KEY = os.getenv("API_SECRET_KEY", "minha-chave-secreta")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=True)
+
+# Limite de Concorrência
+MAX_CONCURRENT = int(os.getenv("MAX_CONCURRENT_TRANSCRIBES", "3"))
+transcription_semaphore = asyncio.Semaphore(MAX_CONCURRENT)
 
 DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
@@ -101,16 +106,21 @@ async def transcribe_audio(
         tmp_path = tmp.name
 
     try:
-        start_time = time.time()
-        
-        # Obter (ou carregar) o modelo solicitado
-        model_instance = whisper_manager.get_model(model)
-        
-        # Transcrição
-        segments, info = model_instance.transcribe(tmp_path, beam_size=5)
-        text = "".join([segment.text for segment in segments]).strip()
-        
-        duration = time.time() - start_time
+        async with transcription_semaphore:
+            start_time = time.time()
+            
+            # Obter (ou carregar) o modelo solicitado
+            model_instance = whisper_manager.get_model(model)
+            
+            # Transcrição (roda em thread pool pois CTranslate2 é síncrono)
+            loop = asyncio.get_running_loop()
+            segments, info = await loop.run_in_executor(
+                None, 
+                lambda: model_instance.transcribe(tmp_path, beam_size=5)
+            )
+            
+            text = "".join([segment.text for segment in segments]).strip()
+            duration = time.time() - start_time
         
         return {
             "text": text,
