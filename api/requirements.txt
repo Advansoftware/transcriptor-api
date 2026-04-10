@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+python-multipart
+faster-whisper
+pydantic
+aiofiles
+av>=13.0.0

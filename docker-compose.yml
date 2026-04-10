@@ -1,0 +1,16 @@
+services:
+  whisper-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: whisper-transcription-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/models
+    environment:
+      - API_SECRET_KEY=${API_SECRET_KEY}
+      - WHISPER_MODEL=${WHISPER_MODEL:-base}
+      - WHISPER_DEVICE=${WHISPER_DEVICE:-cpu}
+      - WHISPER_COMPUTE_TYPE=${WHISPER_COMPUTE_TYPE:-int8}
+    restart: unless-stopped
