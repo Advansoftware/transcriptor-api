@@ -104,6 +104,13 @@
   -H "X-API-Key: SUA_CHAVE_AQUI" \
   -F "file=@/caminho/do/seu/audio.mp3" \
   -F "model=base"</code></pre>
+                    <p class="small-title">Exemplo de Resposta:</p>
+                    <pre><code class="json">{
+  "text": "O texto transcrito aparecerá aqui...",
+  "language": "pt",
+  "duration": 1.45,
+  "model": "base"
+}</code></pre>
                 </div>
 
                 <div class="tab-content" id="python">
@@ -116,7 +123,7 @@ data = {"model": "small"} # Escolha entre tiny, base, small, medium, large
 files = {"file": open("audio.mp3", "rb")}
 
 response = requests.post(url, headers=headers, data=data, files=files)
-print(response.json()["text"])</code></pre>
+print(response.json())</code></pre>
                 </div>
 
                 <div class="tab-content" id="evolution">
@@ -132,7 +139,11 @@ print(response.json()["text"])</code></pre>
                 <div class="tab-content" id="models-doc">
                     <p>Para listar todos os modelos suportados e ver qual está ativo no momento:</p>
                     <pre><code>curl -X GET https://transcriptor.respondia.pro/models</code></pre>
-                    <p>A resposta será um JSON com a lista de modelos disponíveis (tiny, base, small, medium, large...).</p>
+                    <p class="small-title">Exemplo de Resposta:</p>
+                    <pre><code class="json">{
+  "models": ["tiny", "base", "small", "medium", "large-v3"],
+  "current": "base"
+}</code></pre>
                 </div>
             </div>
         </section>
